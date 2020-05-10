@@ -15,7 +15,7 @@ In your terminal, go to Develop directory:
 
 * The site should open and click the "Get Started" button.
 
-[Repository file with video guide](../master/Develop/public/assets/note-taker-guide.mov)
+[Repository file with video guide](../master/public/assets/note-taker-guide.mov)
 
 ## Credits
 Penn LPS Bootcamp
