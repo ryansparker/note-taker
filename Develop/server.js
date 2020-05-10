@@ -7,7 +7,7 @@ var fs = require("fs");
 // Sets up the Express App
 // =============================================================
 var app = express();
-var PORT = 3000;
+var PORT = process.env.PORT || 3000;
 
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
@@ -33,9 +33,28 @@ app.get("/api/notes", function(req, res) {
   res.json(db)
 });
 
+let nextId = 1
+
 app.post("/api/notes", function(req, res) {
   const note = req.body
+
+  // Generate a unique ID
+  const canUseId = function(id) {
+    for (i=0; i<db.length; i++) {
+      if (db[i].id === id) {
+        return false
+      }
+    }
+    return true
+  }
+  
+  while (canUseId(nextId) === false) {
+    nextId++
+  }
+  
+  note.id = nextId
   db.push(note)
+
   fs.writeFile("db/db.json", JSON.stringify(db),function (err){
     if (err) {
       console.log(err);
@@ -43,11 +62,23 @@ app.post("/api/notes", function(req, res) {
       console.log("Successfully wrote database to file.");
     }
   });
+
+  console.log(db)
+
   res.json(db)
 });
 
-app.delete("/api/notes", function(req, res) {
-  
+app.delete("/api/notes/:id", function(req, res) {
+  const nid = req.params.id
+  const index = db.findIndex(function (note) {
+    console.log(note.id, nid, note.id == nid)
+    return note.id == nid
+  })
+
+  if ( index >= 0 ){
+    db.splice(index, 1)
+  }
+
   res.json(db)
 });
 
